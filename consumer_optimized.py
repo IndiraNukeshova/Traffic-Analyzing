@@ -44,8 +44,6 @@ for message in consumer:
         data['timestamp']
     ))
 
-    hi
-
     # Проверяем, пора ли сбросить данные
     if len(batch) >= batch_size or (time.time() - last_flush) >= flush_interval:
         conn.executemany(
