@@ -8,7 +8,7 @@ TOPIC_NAME = "gps"
 CSV_PATH = "taxi_data_subset.csv"   # убедись, что файл лежит в той же папке, что и скрипт
 DELAY = 0.5  # задержка между сообщениями (секунды)
 
-# === 2. Подключение к Kafka ===
+# === 2. Настраиваем продюсер ==
 producer = KafkaProducer(
     bootstrap_servers="localhost:9092",  # адрес брокера
     value_serializer=lambda v: json.dumps(v).encode("utf-8")

@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS gps_data (
 
 # Настройки буфера
 batch = []
-batch_size = 3
-flush_interval = 20
+batch_size = 50
+flush_interval = 99999
 last_flush = time.time()
 
 # Основной цикл
