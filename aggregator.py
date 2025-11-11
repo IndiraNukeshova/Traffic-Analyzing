@@ -3,11 +3,14 @@ import duckdb
 # Подключаемся к БД
 conn = duckdb.connect("taxi_data.duckdb")
 
+# Удаляем старую таблицу, если она есть
+conn.execute("DROP TABLE IF EXISTS taxi_aggregates")
+
 # Агрегация по часу
 query = """
 CREATE OR REPLACE TABLE taxi_aggregates AS
 SELECT 
-    DATE_TRUNC('hour', timestamp) AS hour,
+    DATE_TRUNC('minute', timestamp) - INTERVAL (EXTRACT(MINUTE FROM timestamp) % 10) MINUTE AS interval_10min,
     COUNT(*) AS total_points,
     COUNT(DISTINCT taxi_id) AS unique_taxis,
     MIN(timestamp) AS earliest,
