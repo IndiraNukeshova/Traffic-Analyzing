@@ -1,25 +1,28 @@
 import duckdb
-import matplotlib.pyplot as plt
 
-# Подключаемся к БД
+# Подключаемся к DuckDB
 conn = duckdb.connect("taxi_data.duckdb")
 
-# Загружаем агрегированные данные
-df = conn.execute("SELECT * FROM taxi_aggregates ORDER BY interval_10min").fetchdf()
+# Создаём таблицу агрегатов
+conn.execute("""
+CREATE OR REPLACE TABLE taxi_aggregates AS
+SELECT
+    DATE_TRUNC('minute', timestamp) 
+        - INTERVAL (EXTRACT(MINUTE FROM timestamp) % 10) MINUTE AS interval_10min,
+    COUNT(*) AS total_points,
+    COUNT(DISTINCT taxi_id) AS unique_taxis,
+    MIN(timestamp) AS earliest,
+    MAX(timestamp) AS latest,
+    AVG(lat) AS avg_lat,
+    AVG(lon) AS avg_lon
+FROM gps_data
+GROUP BY 1
+ORDER BY 1;
+""")
+
+print("✅ Aggregation completed and saved to 'taxi_aggregates'")
+
+# Проверяем
+print(conn.execute("SELECT * FROM taxi_aggregates LIMIT 5").fetchdf())
+
 conn.close()
-
-print("✅ Loaded aggregated data:")
-print(df.head())
-
-# --- Визуализация ---
-plt.figure(figsize=(10, 5))
-plt.plot(df["interval_10min"], df["total_points"], label="Total Points", marker="o")
-plt.plot(df["interval_10min"], df["unique_taxis"], label="Unique Taxis", marker="x")
-
-plt.title("Taxi Activity (every 10 minutes)")
-plt.xlabel("Time Interval")
-plt.ylabel("Count")
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show()
