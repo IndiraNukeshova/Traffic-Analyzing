@@ -2,44 +2,37 @@
 
 **Real-Time Streaming Pipeline for Taxi GPS Data using Kafka, Python, DuckDB & Geospatial Analytics**
 
-Этот проект — практическая реализация потокового конвейера (streaming pipeline) для анализа городской мобильности на основе GPS-треков такси. Он демонстрирует навыки работы с:
+This project is a practical implementation of a streaming pipeline for analyzing urban infrastructure based on GPS taxi tracks. It demonstrates the skills of working with:
 
 * Kafka (producer/consumer)
-* потоковой передачей данных
-* DuckDB как аналитическим хранилищем
-* геопространственной визуализацией
-* агрегацией временных рядов
-* подготовкой данных для последующего прогнозирования трафика
+* Streaming data
+* DuckDB as an analytical repository
+* Geospatial visualization
+* aggregation of time series
+* preparation of data for subsequent traffic forecasting
 
-Проект одновременно является:
+---
+# 📌 **Table of contents**
 
-✔ учебным pet-project для портфолио
-✔ реалистичным streaming-pipeline для urban mobility
-✔ частью большого проекта **Traffic Prediction Pipeline**
+1. Project Description
+2. Architectural pipeline
+3. The technologies used
+4. Project structure
+5. File functionality
+6. Launch Instructions
+7. Work examples
+8. The roadmap
 
 ---
 
-# 📌 **Оглавление**
+# 🧭 **Project Description**
 
-1. Описание проекта
-2. Архитектура Pipeline
-3. Используемые технологии
-4. Структура проекта
-5. Функциональность файлов
-6. Инструкция по запуску
-7. Примеры работы
-8. Roadmap
-
----
-
-# 🧭 **Описание проекта**
-
-Городская мобильность (Urban Mobility) — один из ключевых источников данных для анализа транспортной нагрузки, построения карт трафика и прогнозирования движения транспорта.
-GPS-трекеры в такси сегодня заменяют датчики на дорогах, позволяя в реальном времени собирать координаты и временные отметки.
+Urban Mobility is one of the key factors influencing the traffic load, the movement of the tracker maps, and traffic forecasting.
+GPS trackers in taxis are constantly changing sensors on the roads, which allows you to collect coordinates and timestamps in real time.
 
 ### 📍 Rome Taxi Dataset
 
-Проект использует выборку GPS-координат реальных такси в Риме:
+The project uses a sample of GPS taxi codes in Rome:
 
 ```
 taxi_id  
@@ -48,12 +41,12 @@ lon
 timestamp
 ```
 
-Имитируется поток GPS-точек такси:
+It is registered using the GPS point of view of the dachshund:
 **Producer → Kafka → Consumer → DuckDB → Aggregator → Visualization**
 
 ---
 
-# 🔧 **Архитектура Pipeline**
+# 🔧 **Pipeline Architecture**
 
 ```mermaid
 flowchart LR
@@ -71,163 +64,159 @@ flowchart LR
 
 ---
 
-# 🛠 **Используемые технологии**
+# 🛠 **Technologies used**
 
-| Компонент                   | Используется для                          |
-| --------------------------- | ----------------------------------------- |
-| **Kafka**                   | потоковая доставка GPS-точек такси        |
-| **Python**                  | producer, consumer, анализ и визуализация |
-| **DuckDB**                  | аналитическое хранилище, OLAP-запросы     |
-| **Pandas**                  | обработка данных                          |
-| **Matplotlib**              | визуализация                              |
-| **GeoPandas / Shapely**     | геопространственные операции              |
-| **Scikit-learn**            | кластеризация (KMeans)                    |
-| **Docker / docker-compose** | запуск Kafka                              |
+| Component                   | Used for                                      |
+| --------------------------- | ----------------------------------------------|
+| **Kafka**                   | precise installation of the GPS access point  |
+| **Python**                  | producer, consumer, analysis and visualization|
+| **DuckDB**                  | analytical management, OLAP queries           |
+| **Pandas**                  | data processing                               |
+| **Matplotlib**              | vizualisation                                 |
+| **GeoPandas / Shapely**     | geospatial operations                         |
+| **Scikit-learn**            | classification (KMeans)                       |
+| **Docker / docker-compose** | Kafka launch                                  |
 
 ---
 
-# 📂 **Структура проекта**
-
+# 📂 **Project structure**
 ```
 .
-├── aggregator.py                     # Агрегация данных каждые 10 минут
-├── consumer.py                      # Базовый consumer Kafka → DuckDB
-├── consumer_optimized.py            # Оптимизированный consumer с буферизацией
-├── consumer.log                     # Логи консюмера
+├── aggregator.py                     # Aggregating data every 10 minutes
+├── consumer.py                      # Basic consumer Kafka → DuckDB
+├── consumer_optimized.py            # ОOptimized consumer with buffering
+├── consumer.log                     # Consumer logs
 ├── docker-compose.yml               # Kafka + Zookeeper
-├── gps_data.duckdb                  # DuckDB с сырыми GPS
-├── taxi_data.duckdb                 # DuckDB с агрегатами
-├── taxi_data_subset.csv             # Выборка датасета
-├── producer.py                      # Producer: отправка CSV → Kafka
-├── producer_from_kaggle.py          # Producer: поток с Kaggle-датасета
-├── reset.py                         # Полная очистка и пересоздание окружения
-├── visualize.py                     # Базовая визуализация временных рядов
-├── visualize_HEATMAP (hexbin).py    # Тепловая карта координат
-└── visualize_KMeans.py              # Кластеры KMeans по GPS
+├── gps_data.duckdb                  # DuckDB with raw GPS
+├── taxi_data.duckdb                 # DuckDB with aggregates
+├── taxi_data_subset.csv             # Dataset selection
+├── producer.py                      # Producer: sending CSV → Kafka
+├── producer_from_kaggle.py          # Producer: stream from Kaggle dataset
+├── reset.py                         # Complete cleaning and re-creation of the environment
+├── visualize.py                     # Basic visualization of time series
+├── visualize_HEATMAP (hexbin).py    # Heat map of coordinates
+└── visualize_KMeans.py              # KMeans clusters by GPS
 ```
 
+
+# 🧩 **File functionality**
+
+### **producer.py / producer_from_kaggle.py**
+
+* read GPS points from CSV or Kaggle dataset
+* send them to Kafka Topic as streaming events
+* each event contains: taxi id, lat, lon, timestamp
 ---
 
-# 🧩 **Функциональность файлов**
+### **consumer.py**
 
-### **📤 producer.py / producer_from_kaggle.py**
+* accepts messages from Kafka
+* adds them line by line to DuckDB
 
-* считывают GPS-точки из CSV или Kaggle-датасета
-* отправляют их в Kafka Topic как потоковые события
-* каждое событие содержит: id такси, lat, lon, timestamp
+### **consumer_optimized.py**
 
----
-
-### **📥 consumer.py**
-
-* принимает сообщения из Kafka
-* построчно добавляет их в DuckDB
-
-### **⚡ consumer_optimized.py**
-
-* буферизует записи в batches
-* быстрее записывает данные в DuckDB
-* снижает нагрузку на Kafka + менее фрагментированное хранилище
-
----
-
-### **🔄 aggregator.py**
-
-Агрегирует данные в DuckDB:
-
-* группировка по 10-минутным интервалам
-* количество точек (`total_points`)
-* средняя широта/долгота (`avg_lat`, `avg_lon`)
-* сохранение в отдельную таблицу `taxi_aggregates`
+* buffers writes to batches
+* Writes data to DuckDB faster
+* reduces the load on Kafka + less fragmented storage
 
 ---
 
-### **📊 visualize.py**
+### **aggregator.py**
 
-Строит временные графики:
+Aggregates data in DuckDB:
 
-* суммарные точки по времени
-* средние координаты
-* динамика трафика
-
----
-
-### **🔥 visualize_HEATMAP (hexbin).py**
-
-Создаёт **hexbin heatmap**:
-
-* плотность GPS-координат
-* карта активности города
-* полезно для анализа пробок / кластеров
+* grouping by 10-minute intervals
+* number of points (`total_points')
+* average latitude/longitude (`avg_lat`, `avg_lon`)
+* saving to a separate table `taxi_aggregates`
 
 ---
 
-### **🧭 visualize_KMeans.py**
+### **visualize.py**
 
-Применяет **кластеризацию**:
+Builds time schedules:
 
-* KMeans по GPS-точкам
-* выделяет районы активности
-* отображает центроиды
-
----
-
-### **🧹 reset.py**
-
-Полная перезагрузка окружения:
-
-* удаляет DuckDB файлы
-* пересоздаёт таблицы
-* очищает Kafka топики
+* summary points in time
+* average coordinates
+* traffic dynamics
 
 ---
 
-# 🚀 **Инструкция по запуску**
+### **visualize_HEATMAP (hexbin).py**
 
-## 1️⃣ Создать виртуальное окружение
+Creates **hexbin heatmap**:
+
+* density of GPS coordinates
+* City activity map
+* useful for analyzing traffic jams/clusters
+
+---
+
+### **visualize_KMeans.py**
+
+Applies **clusterization**:
+
+* KMeans by GPS points
+* highlights areas of activity
+* displays centroids
+
+---
+
+### **reset.py**
+
+A complete reboot of the environment:
+
+* deletes DuckDB files
+* recreates tables
+* cleans Kafka topics
+
+---
+# 🚀 **Launch Instructions**
+
+## 1️⃣ Create a virtual environment
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-## 2️⃣ Установить зависимости
+## 2️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 3️⃣ Запустить Kafka
+## 3️⃣ Launch Kafka
 
 ```bash
 docker-compose up -d
 ```
 
-Проверить:
+Check:
 
 ```bash
 docker ps
 ```
 
-## 4️⃣ Запустить consumer
+## 4️⃣ Launch consumer
 
 ```bash
 python consumer.py
 ```
 
-или оптимизированную версию:
+or optimized version:
 
 ```bash
 python consumer_optimized.py
 ```
 
-## 5️⃣ Запустить producer
+## 5️⃣ Launch producer
 
 ```bash
 python producer.py
 ```
 
-## 6️⃣ Проверить данные в DuckDB
+## 6️⃣ Check the data in DuckDB
 
 ```bash
 duckdb
@@ -235,13 +224,13 @@ duckdb
 > SELECT * FROM gps_data LIMIT 5;
 ```
 
-## 7️⃣ Выполнить агрегацию
+## 7️⃣ Perform aggregation
 
 ```bash
 python aggregator.py
 ```
 
-## 8️⃣ Визуализация
+## 8️⃣ Vizualisation
 
 ```bash
 python visualize.py
@@ -251,54 +240,50 @@ python visualize_KMeans.py
 
 ---
 
-# 📊 **Примеры работы**
+# 📊 **Examples of work**
 
-### 📈 Потоковая запись:
+### 📈 Streaming recording:
 
 ```
 [Producer] Sent: taxi_id=10234 lat=41.89 lon=12.49 timestamp=2014-02-01 00:00:12
 [Consumer] Inserted batch of 500 rows
 ```
 
-### 🧩 Агрегированные данные:
-
+### 🧩 Aggregated data:
 ```
 interval_10min         total_points    avg_lat      avg_lon
 2014-02-01 00:00:00    2390            41.8921      12.4982
 2014-02-01 00:10:00    2521            41.8914      12.4967
 ```
+### 🗺 What visualization scripts generate
 
-### 🗺 Что генерируют скрипты визуализаций
-
-* **Heatmap** показывает плотные районы Рима
-* **KMeans** выделяет транспортные зоны
-* **Временной график** показывает пики нагрузки в течение суток
+* **Heatmap** shows dense areas of Rome
+* **KMeans** highlights transport zones
+* **The time graph** shows the peaks of the load during the day
 
 ---
 
 # 🎯 **Roadmap**
 
-### 🔜 **Ближайшие улучшения**
+### 🔜 **Upcoming improvements**
 
-* ML-модель для **прогнозирования трафика**
-* Предсказание плотности GPS-точек на карте
-* Автоматический scheduler для агрегаций
+* ML model for **traffic forecasting**
+* Predicting the density of GPS points on the map
+* Automatic scheduler for aggregations
 * Dashboard (Streamlit / Superset)
-* Поддержка WebSocket для реального real-time UI
+* WebSocket support for real-time UI
 
-### 🔭 **Долгосрочные планы**
+### 🔭 **Long-term plans**
 
-* Обучение модели на агрегированных временных рядах
-* Построение карт интенсивности движения по часам
-* Продвинутая геоаналитика (H3, spatial joins)
-
+* Model training on aggregated time series
+* Building traffic intensity maps by the hour
+* Advanced geoanalytics (H3, spatial joins)
 ---
 
-# 🤝 **Для кого этот проект**
+# 🤝 **Who is this project for?**
 
-Этот репозиторий идеально подойдёт:
-
+This repository would be perfect for:
 * Data Engineer (Kafka / ETL / streaming)
-* Data Scientist (подготовка данных + геоаналитика)
+* Data Scientist (data preparation + geoanalytics)
 * Python Developer
 * ML Engineer (time series forecasting)
